@@ -1,6 +1,6 @@
-﻿using EventRegistration.DBModels.Users;
+﻿using EventRegistration.Database.Models.Users;
 
-namespace EventRegistration.DBModels.Events
+namespace EventRegistration.Database.Models.Events
 {
     /// <summary> Модель записи на мероприятие </summary>
     public class Registration

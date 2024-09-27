@@ -1,4 +1,4 @@
-﻿namespace EventRegistration.DBModels.Users
+﻿namespace EventRegistration.Database.Models.Users
 {
     /// <summary> Роли пользователей </summary>
     public enum Role

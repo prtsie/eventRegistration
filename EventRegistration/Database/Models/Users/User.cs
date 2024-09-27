@@ -1,4 +1,4 @@
-﻿namespace EventRegistration.DBModels.Users
+﻿namespace EventRegistration.Database.Models.Users
 {
     /// <summary> Модель пользователя </summary>
     public class User
