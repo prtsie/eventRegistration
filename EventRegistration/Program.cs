@@ -1,4 +1,6 @@
 using EventRegistration.Services.DateTimeProvider;
+using EventRegistration.Database;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventRegistration;
 
@@ -20,6 +22,12 @@ public static class Program
         builder.Services.AddControllersWithViews();
 
         builder.Services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+      
+        // Добавляем строку подключения к БД
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+        // Регистрируем контекст базы данных
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
     }
 
     private static void ConfigureRequestPipeline(this WebApplication app)
