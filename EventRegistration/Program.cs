@@ -45,7 +45,7 @@ public static class Program
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
-                options.LoginPath = "/home/login";
+                options.LoginPath = "/home/authentication";
                 options.AccessDeniedPath = options.LoginPath;
                 options.LogoutPath = "/home/logout";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
