@@ -6,9 +6,9 @@ using Newtonsoft.Json.Linq;
 
 namespace DatabaseTool;
 
-class Program
+static internal class Program
 {
-    static async Task Main(string[] args)
+    private static async Task Main()
     {
         try
         {
@@ -16,7 +16,7 @@ class Program
             var input = Console.ReadLine();
             var path = string.IsNullOrWhiteSpace(input) ? "appsettings.json" : input;
 
-            var root = JObject.Parse(File.ReadAllText(path));
+            var root = JObject.Parse(await File.ReadAllTextAsync(path));
 
             var connectionStrings =
                 root.DescendantsAndSelf()
@@ -28,11 +28,12 @@ class Program
 
             if (connectionStrings is null || connectionStrings.Count == 0)
             {
-                throw new Exception("Не найдено строк подключения.");
+                throw new("Не найдено строк подключения.");
             }
 
-            var keys = connectionStrings.Keys.ToArray();
+            Console.WriteLine();
 
+            var keys = connectionStrings.Keys.ToArray();
             for (var i = 0; i < connectionStrings.Count; i++)
             {
                 Console.WriteLine($"{i}) {keys[i]}: {connectionStrings[keys[i]]}");
@@ -232,7 +233,7 @@ class Program
         return Console.ReadLine()!.ToLower() == "y";
     }
 
-    enum Actions
+    private enum Actions
     {
         AddHost,
         RemoveHost,
