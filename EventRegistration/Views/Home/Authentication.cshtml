@@ -3,16 +3,26 @@
     ViewData["Title"] = "Аутентификация";
 }
 
-<div class="text-center">
+<div>
     <h1 class="display-4">Welcome</h1>
-    <form method="post">
-        <p>Логин:</p>
-        @Html.EditorFor(r => r!.Login)
+    <form method="post" style="text-align: left">
+        <p >
+            @Html.LabelFor(r => r!.Login, "Логин:")<br/>
+            @Html.EditorFor(r => r!.Login)<br/>
+            <span class="text-danger" asp-validation-for="Login"></span>
+        </p>
 
-        <p>Пароль:</p>
-        @Html.EditorFor(r => r!.Password)
+        <p >
+            @Html.LabelFor(r => r!.Password, "Пароль:")<br/>
+            @Html.PasswordFor(r => r!.Password)<br/>
+            <span class="text-danger" asp-validation-for="Password"></span>
+        </p>
 
         <input class="btn btn-primary" type="submit" value="Войти"/>
+        или
+        <a asp-action="Register">
+            <input class="btn btn-outline-primary" type="button" value="Зарегистрироваться"/>
+        </a>
         @if (Model is not null)
         {
             <p class="text-danger">Incorrect login or password</p>
