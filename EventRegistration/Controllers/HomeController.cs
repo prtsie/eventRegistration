@@ -73,9 +73,17 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     }
 
     [HttpGet]
-    public IActionResult Event(Guid id)
+    public async Task<IActionResult> Event(Guid id, CancellationToken cancellationToken)
     {
-        return View();
+        var eventItem = await context.GetEntities<Event>().Include(e => e.Host)
+            .SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        if (eventItem == null)
+        {
+            return NotFound();
+        }
+
+        return View(eventItem);
     }
 
     [HttpGet]
@@ -84,4 +92,69 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
         var events = await context.GetEntities<Event>().Where(e => e.Date < dateTimeProvider.Now()).ToListAsync(cancellationToken);
         return View(events);
     }
+
+    [HttpGet]
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(request);
+        }
+
+        var user = new User
+        {
+            Login = request.Login,
+            Password = request.Password,
+            Role = request.Role
+        };
+
+        context.AddEntity(user);  // ћетод AddEntity дл€ добавлени€ пользовател€
+        await context.SaveAsync(cancellationToken);
+
+        return RedirectToAction(nameof(Authentication));
+    }
+
+    [HttpGet]
+    [Authorize(Program.HostPolicy)] // «акомментировать дл€ тестировани€ (текущий пользователь не имеет прав дл€ доступа к этой странице)
+    public IActionResult CreateEvent()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Program.HostPolicy)]
+    public async Task<IActionResult> CreateEvent(CreateEventRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(request);
+        }
+
+        var login = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
+        var user = await context.GetEntities<User>().SingleOrDefaultAsync(u => u.Login == login, cancellationToken);
+
+        if (user == null)
+        {
+            return Forbid();
+        }
+
+        var newEvent = new Event
+        {
+            Name = request.Name,
+            Date = request.Date,
+            Host = user
+        };
+
+        context.AddEntity(newEvent);  // ћетод AddEntity дл€ добавлени€ меропри€ти€
+        await context.SaveAsync(cancellationToken);
+
+        return RedirectToAction(nameof(HostEvents));
+    }
+
 }

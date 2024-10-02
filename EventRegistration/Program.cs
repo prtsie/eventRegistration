@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventRegistration;
-
 public static class Program
 {
     public const string MemberPolicy = "Member";
@@ -19,6 +18,8 @@ public static class Program
 
         var app = builder.Build();
         app.ConfigureRequestPipeline();
+
+
 
         app.Run();
     }

@@ -1,0 +1,17 @@
+﻿@model EventRegistration.Requests.CreateEventRequest
+@{
+	ViewData["Title"] = "Создать мероприятие";
+}
+
+<div class="text-center">
+	<h1 class="display-4">Создать мероприятие</h1>
+	<form method="post">
+		<p>Название мероприятия:</p>
+		@Html.EditorFor(m => m.Name)
+
+		<p>Дата проведения:</p>
+		@Html.EditorFor(m => m.Date)
+
+		<input class="btn btn-primary" type="submit" value="Создать мероприятие" />
+	</form>
+</div>

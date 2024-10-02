@@ -1,0 +1,17 @@
+﻿@model EventRegistration.Requests.RegisterRequest
+@{
+	ViewData["Title"] = "Регистрация";
+}
+
+<div class="text-center">
+	<h1 class="display-4">Регистрация</h1>
+	<form method="post">
+		<p>Логин:</p>
+		@Html.EditorFor(m => m.Login)
+		<p>Пароль:</p>
+		@Html.PasswordFor(m => m.Password)
+		<p>Роль:</p>
+		@Html.DropDownListFor(m => m.Role, new SelectList(Enum.GetValues(typeof(EventRegistration.Database.Models.Users.Role))))
+		<input class="btn btn-primary" type="submit" value="Зарегистрироваться" />
+	</form>
+</div>
