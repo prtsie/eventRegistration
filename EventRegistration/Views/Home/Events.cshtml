@@ -2,7 +2,9 @@
 @{
     ViewData["Title"] = "Мероприятия";
 }
-
+@{
+    //TODO проверка на пустость
+  }
 <div class="text-center">
     <h1 class="display-4">Мероприятия</h1>
 
@@ -14,9 +16,10 @@
         @foreach (var item in Model)
         {
             <tr>
+                @Model
                 <td>@item.Name</td>
                 <td>@item.Date.ToShortDateString()</td>
-            <td><a href="/event/@item.Id"><input class="btn btn-primary" type="button" value="Подробнее"/></a></td>
+                <td><a href="/event/@item.Id"><input class="btn btn-primary" type="button" value="Подробнее"/></a></td>
             </tr>
         }
         </tbody>

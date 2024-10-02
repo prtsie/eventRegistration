@@ -5,7 +5,7 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <div>
+    <form method="post">
         <p>Логин:</p>
         @Html.EditorFor(r => r!.Login)
 
@@ -17,5 +17,5 @@
         {
             <p class="text-danger">Incorrect login or password</p>
         }
-    </div>
+    </form>
 </div>

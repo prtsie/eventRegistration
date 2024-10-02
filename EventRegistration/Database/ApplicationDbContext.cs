@@ -5,7 +5,7 @@ using EventRegistration.Database.Models.Events;
 
 namespace EventRegistration.Database
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext, IDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
@@ -53,5 +53,20 @@ namespace EventRegistration.Database
 
             base.OnModelCreating(modelBuilder);
         }
+
+        /// <summary> <inheritdoc cref="IDbContext.GetEntities{T}"/> </summary>
+        public IQueryable<T> GetEntities<T>() where T : class
+            => Set<T>();
+
+        /// <summary> <inheritdoc cref="IDbContext.GetById{T}"/> </summary>
+        public T? GetById<T>(Guid id) where T : class
+            => Find<T>(id);
+
+        void IDbContext.Update<T>(T entity) => Update(entity);
+
+        void IDbContext.Remove<T>(T entity) => Remove(entity);
+
+        ///<summary> <inheritdoc cref="IDbContext.Save"/> </summary>
+        public void Save() => SaveChanges();
     }
 }
