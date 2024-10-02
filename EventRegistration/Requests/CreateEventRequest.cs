@@ -12,7 +12,5 @@ namespace EventRegistration.Requests
 
         [Required]
         public DateTime Date { get; set; }
-
-        public Guid HostId { get; set; } // Идентификатор организатора
     }
 }
