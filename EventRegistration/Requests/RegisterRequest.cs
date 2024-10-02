@@ -1,5 +1,4 @@
 ﻿using EventRegistration.Database.Models;
-using EventRegistration.Database.Models.Users;
 using System.ComponentModel.DataAnnotations;
 
 namespace EventRegistration.Requests
@@ -15,8 +14,5 @@ namespace EventRegistration.Requests
         [Required]
         [MaxLength(Constraints.MaxPasswordLength)]
         public required string Password { get; set; }
-
-        [Required]
-        public Role Role { get; set; } = Role.Member; // Роль по умолчанию - Участник
     }
 }
