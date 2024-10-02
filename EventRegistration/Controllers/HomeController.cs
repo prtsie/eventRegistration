@@ -107,6 +107,12 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
             return View(request);
         }
 
+        var foundUser = await context.GetEntities<User>().SingleOrDefaultAsync(u => u.Login == request.Login, cancellationToken);
+        if (foundUser is not null)
+        {
+            return View(request);
+        }
+
         var user = new User
         {
             Login = request.Login,
