@@ -1,3 +1,6 @@
+using EventRegistration.Database;
+using Microsoft.EntityFrameworkCore;
+
 namespace EventRegistration;
 
 public class Program
@@ -6,6 +9,12 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        // Добавляем строку подключения к БД
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+        // Регистрируем контекст базы данных
+        builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
+        
         // Add services to the container.
         builder.Services.AddControllersWithViews();
 
