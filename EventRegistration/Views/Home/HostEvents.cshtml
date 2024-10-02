@@ -1,0 +1,33 @@
+﻿@using EventRegistration.Services.DateTimeProvider
+@model List<EventRegistration.Database.Models.Events.Event>
+@inject IDateTimeProvider dateTimeProvider
+@{
+    ViewData["Title"] = "Мероприятия";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Ваши мероприятия</h1>
+
+    <table class="table table-bordered table-active">
+        <thead>
+        <th>Название</th><th>Дата проведения</th><th></th>
+        </thead>
+        <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.Date.ToShortDateString()</td>
+                @if (item.Date < dateTimeProvider.Now())
+                {
+                    <td><a href="/event/@item.Id"><input class="btn btn-danger" type="button" value="Отменить"/></a></td>
+                }
+                else
+                {
+                    <td>Мероприятие закончилось</td>
+                }
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
