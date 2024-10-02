@@ -21,7 +21,7 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     }
 
     [HttpPost]
-    public async Task<IActionResult> Authentication(AuthenticationRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Authentication(AuthenticationRequest request, [FromQuery] string? returnUrl, CancellationToken cancellationToken)
     {
         var user = await context.GetEntities<User>()
             .SingleOrDefaultAsync(u => u.Login == request.Login && u.Password == request.Password, cancellationToken);
@@ -40,6 +40,10 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
 
         await HttpContext.SignInAsync(identity.AuthenticationType, new(identity));
 
+        if (returnUrl is not null)
+        {
+            return LocalRedirect(returnUrl);
+        }
         return user.Role switch
         {
             Role.Member => RedirectToAction(nameof(Events)),
@@ -49,10 +53,10 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     }
 
     [HttpGet]
-    public async Task<IActionResult> Logout()
+    public async Task<IActionResult> Logout(string returnUrl = "/")
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return RedirectToAction(nameof(Authentication));
+        return LocalRedirect(returnUrl);
     }
 
     [HttpGet]
