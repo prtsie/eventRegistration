@@ -1,0 +1,21 @@
+﻿@model EventRegistration.Requests.AuthenticationRequest?
+@{
+    ViewData["Title"] = "Аутентификация";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <div>
+        <p>Логин:</p>
+        @Html.EditorFor(r => r!.Login)
+
+        <p>Пароль:</p>
+        @Html.EditorFor(r => r!.Password)
+
+        <input class="btn btn-primary" type="submit" value="Войти"/>
+        @if (Model is not null)
+        {
+            <p class="text-danger">Incorrect login or password</p>
+        }
+    </div>
+</div>
