@@ -1,3 +1,4 @@
+using EventRegistration.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using EventRegistration.Database.Models.Users;
 using EventRegistration.Database.Models.Events;
