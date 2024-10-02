@@ -4,6 +4,7 @@ using EventRegistration.Database.Models.Users;
 using EventRegistration.Requests;
 using EventRegistration.Services.DateTimeProvider;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EventRegistration.Controllers;
 
@@ -16,9 +17,10 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     }
 
     [HttpPost]
-    public IActionResult Authentication(AuthenticationRequest request)
+    public async Task<IActionResult> Authentication(AuthenticationRequest request, CancellationToken cancellationToken)
     {
-        var user = context.GetEntities<User>().SingleOrDefault(u => u.Login == request.Login && u.Password == request.Password);
+        var user = await context.GetEntities<User>()
+            .SingleOrDefaultAsync(u => u.Login == request.Login && u.Password == request.Password, cancellationToken);
 
         if (user is null)
         {
@@ -48,9 +50,9 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     }
 
     [HttpGet]
-    public IActionResult Events()
+    public async Task<IActionResult> Events(CancellationToken cancellationToken)
     {
-        var events = context.GetEntities<Event>().Where(e => e.Date < dateTimeProvider.Now()).ToList();
+        var events = await context.GetEntities<Event>().Where(e => e.Date < dateTimeProvider.Now()).ToListAsync(cancellationToken);
         return View(events);
     }
 }

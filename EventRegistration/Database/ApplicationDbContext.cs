@@ -8,7 +8,9 @@ namespace EventRegistration.Database
     public class ApplicationDbContext : DbContext, IDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options) { }
+            : base(options)
+        {
+        }
 
         // DbSet для сущностей
         public DbSet<User> Users { get; set; }
@@ -33,9 +35,9 @@ namespace EventRegistration.Database
                 entity.Property(e => e.Name).IsRequired().HasMaxLength(Constraints.MaxEventNameLength);
                 entity.Property(e => e.Date).IsRequired();
                 entity.HasOne(e => e.Host)
-                      .WithMany()
-                      .IsRequired()
-                      .OnDelete(DeleteBehavior.Restrict);
+                    .WithMany()
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             // Конфигурация сущности Registration
@@ -43,12 +45,12 @@ namespace EventRegistration.Database
             {
                 entity.HasKey(r => r.Id);
                 entity.HasOne(r => r.User)
-                      .WithMany()
-                      .IsRequired();
+                    .WithMany()
+                    .IsRequired();
 
                 entity.HasOne(r => r.Event)
-                      .WithMany()
-                      .IsRequired();
+                    .WithMany()
+                    .IsRequired();
             });
 
             base.OnModelCreating(modelBuilder);
@@ -58,15 +60,15 @@ namespace EventRegistration.Database
         public IQueryable<T> GetEntities<T>() where T : class
             => Set<T>();
 
-        /// <summary> <inheritdoc cref="IDbContext.GetById{T}"/> </summary>
-        public T? GetById<T>(Guid id) where T : class
-            => Find<T>(id);
+        /// <summary> <inheritdoc cref="IDbContext.GetByIdAsync{T}"/> </summary>
+        public async Task<T?> GetByIdAsync<T>(Guid id, CancellationToken cancellationToken) where T : class
+            => await FindAsync<T>([id], cancellationToken: cancellationToken);
 
         void IDbContext.Update<T>(T entity) => Update(entity);
 
         void IDbContext.Remove<T>(T entity) => Remove(entity);
 
-        ///<summary> <inheritdoc cref="IDbContext.Save"/> </summary>
-        public void Save() => SaveChanges();
+        ///<summary> <inheritdoc cref="IDbContext.SaveAsync"/> </summary>
+        public async Task SaveAsync(CancellationToken cancellationToken) => await SaveChangesAsync(cancellationToken);
     }
 }
