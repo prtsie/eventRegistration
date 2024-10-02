@@ -1,15 +1,28 @@
-﻿@model EventRegistration.Requests.RegisterRequest
+﻿@model EventRegistration.Requests.RegisterRequest?
 @{
 	ViewData["Title"] = "Регистрация";
 }
 
-<div class="text-center">
-	<h1 class="display-4">Регистрация</h1>
-	<form method="post">
-		<p>Логин:</p>
-		@Html.EditorFor(m => m.Login)
-		<p>Пароль:</p>
-		@Html.PasswordFor(m => m.Password)
-		<input class="btn btn-primary" type="submit" value="Зарегистрироваться" />
-	</form>
+<div>
+    <h1 class="display-4">Регистрация</h1>
+    <form method="post" style="text-align: left">
+        <p >
+            @Html.LabelFor(r => r!.Login, "Логин:")<br/>
+            @Html.EditorFor(r => r!.Login)<br/>
+            <span class="text-danger" asp-validation-for="Login"></span>
+        </p>
+
+        <p >
+            @Html.LabelFor(r => r!.Password, "Пароль:")<br/>
+            @Html.PasswordFor(r => r!.Password)<br/>
+            <span class="text-danger" asp-validation-for="Password"></span>
+        </p>
+
+        <input class="btn btn-primary" type="submit" value="Зарегистрироваться" />
+
+        @if (Model is not null)
+        {
+            <p class="text-danger">Логин уже используется, попробуйте другой</p>
+        }
+    </form>
 </div>
