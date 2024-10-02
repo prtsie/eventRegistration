@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace EventRegistration;
-
 public static class Program
 {
     public const string MemberPolicy = "Member";
@@ -19,6 +18,8 @@ public static class Program
 
         var app = builder.Build();
         app.ConfigureRequestPipeline();
+
+
 
         app.Run();
     }
@@ -44,7 +45,7 @@ public static class Program
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
-                options.LoginPath = "/home/login";
+                options.LoginPath = "/home/authentication";
                 options.AccessDeniedPath = options.LoginPath;
                 options.LogoutPath = "/home/logout";
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(30);

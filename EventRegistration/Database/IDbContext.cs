@@ -22,6 +22,11 @@
         /// <param name="entity"> Сущность </param>
         void Remove<T>(T entity) where T : class;
 
+        /// <summary> Добавление новой сущности в контекст </summary>
+        /// <typeparam name="T"> Тип сущности </typeparam>
+        /// <param name="entity"> Сущность </param>
+        void AddEntity<T>(T entity) where T : class;
+
         /// <summary> Сохранить изменения </summary>
         Task SaveAsync(CancellationToken cancellationToken);
     }

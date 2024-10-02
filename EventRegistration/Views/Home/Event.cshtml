@@ -1,11 +1,15 @@
 ﻿@model EventRegistration.Database.Models.Events.Event
 @{
-    ViewData["Title"] = Model.Name;
+	ViewData["Title"] = Model.Name;
 }
 
 <div class="text-center">
-    <h1 class="display-4">@Model.Name</h1>
-    @{
-        //TODO дописать
-    }
+	<h1 class="display-4">@Model.Name</h1>
+	<p>Дата проведения: @Model.Date.ToShortDateString()</p>
+	<p>Организатор: @Model.Host.Login</p>
+
+	@if (User.IsInRole("Member"))
+	{
+		<a href="/event/register/@Model.Id" class="btn btn-primary">Записаться на мероприятие</a>
+	}
 </div>

@@ -1,10 +1,10 @@
-﻿@model EventRegistration.Requests.AuthenticationRequest?
+﻿@model EventRegistration.Requests.RegisterRequest?
 @{
-    ViewData["Title"] = "Аутентификация";
+	ViewData["Title"] = "Регистрация";
 }
 
 <div>
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Регистрация</h1>
     <form method="post" style="text-align: left">
         <p >
             @Html.LabelFor(r => r!.Login, "Логин:")<br/>
@@ -18,14 +18,11 @@
             <span class="text-danger" asp-validation-for="Password"></span>
         </p>
 
-        <input class="btn btn-primary" type="submit" value="Войти"/>
-        или
-        <a asp-action="Register">
-            <input class="btn btn-outline-primary" type="button" value="Зарегистрироваться"/>
-        </a>
+        <input class="btn btn-primary" type="submit" value="Зарегистрироваться" />
+
         @if (Model is not null)
         {
-            <p class="text-danger">Incorrect login or password</p>
+            <p class="text-danger">Логин уже используется, попробуйте другой</p>
         }
     </form>
 </div>

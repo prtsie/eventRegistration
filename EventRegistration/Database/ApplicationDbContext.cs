@@ -68,6 +68,9 @@ namespace EventRegistration.Database
 
         void IDbContext.Remove<T>(T entity) => Remove(entity);
 
+        /// <summary> <inheritdoc cref="IDbContext.AddEntity{T}"/> </summary>
+        public void AddEntity<T>(T entity) where T : class => Add(entity); // Метод для добавления сущности
+
         ///<summary> <inheritdoc cref="IDbContext.SaveAsync"/> </summary>
         public async Task SaveAsync(CancellationToken cancellationToken) => await SaveChangesAsync(cancellationToken);
     }
