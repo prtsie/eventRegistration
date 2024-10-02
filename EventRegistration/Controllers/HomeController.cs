@@ -75,7 +75,7 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     [HttpGet]
     public async Task<IActionResult> Event(Guid id, CancellationToken cancellationToken)
     {
-        var eventItem = await context.GetEntities<Event>().Include(e => e.Host)
+        var eventItem = await context.GetEntities<Event>().Include(e => e.Host) //TODO СѓР±СЂР°С‚СЊ, РєРѕРіРґР° РІ Event РїРѕСЏРІРёС‚СЃСЏ СЃРІРѕР№СЃС‚РІРѕ СЃ РѕСЂРіР°РЅРёР·Р°С‚РѕСЂРѕРј
             .SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         if (eventItem == null)
@@ -111,17 +111,17 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
         {
             Login = request.Login,
             Password = request.Password,
-            Role = request.Role
+            Role = Role.Member
         };
 
-        context.AddEntity(user);  // Метод AddEntity для добавления пользователя
+        context.AddEntity(user);  // пїЅпїЅпїЅпїЅпїЅ AddEntity пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         await context.SaveAsync(cancellationToken);
 
         return RedirectToAction(nameof(Authentication));
     }
 
     [HttpGet]
-    [Authorize(Program.HostPolicy)] // Закомментировать для тестирования (текущий пользователь не имеет прав для доступа к этой странице)
+    [Authorize(Program.HostPolicy)] // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ)
     public IActionResult CreateEvent()
     {
         return View();
@@ -151,7 +151,7 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
             Host = user
         };
 
-        context.AddEntity(newEvent);  // Метод AddEntity для добавления мероприятия
+        context.AddEntity(newEvent);  // пїЅпїЅпїЅпїЅпїЅ AddEntity пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         await context.SaveAsync(cancellationToken);
 
         return RedirectToAction(nameof(HostEvents));
