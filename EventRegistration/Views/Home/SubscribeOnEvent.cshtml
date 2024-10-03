@@ -1,0 +1,42 @@
+﻿@model EventRegistration.Requests.SubscribeRequest
+@{
+ViewData["Title"] = "Запись";
+}
+
+<form method="post">
+    <h1 class="display-4"> Запись на мероприятие</h1>
+
+    <p>
+        @Html.LabelFor(m => m.Firstname, "Ваше имя:")<br/>
+        @Html.EditorFor(m => m.Firstname)<br/>
+        <span class="text-danger" asp-validation-for="Firstname"></span>
+    </p>
+
+    <p>
+        @Html.LabelFor(m => m.Surname, "Ваша фамилия:")<br/>
+        @Html.EditorFor(m => m.Surname)<br/>
+        <span class="text-danger" asp-validation-for="Surname"></span>
+    </p>
+
+    <p>
+        @Html.LabelFor(m => m.Patronymic, "Ваше отчество (если есть):")<br/>
+        @Html.EditorFor(m => m.Patronymic)<br/>
+        <span class="text-danger" asp-validation-for="Patronymic"></span>
+    </p>
+
+    <p>
+        @Html.LabelFor(m => m.Email, "Ваша почта (на неё придет qr-код):")<br/>
+        @Html.EditorFor(m => m.Email)<br/>
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </p>
+
+    <p>
+        @Html.LabelFor(m => m.PhoneNum, "Ваш номер телефона:")<br/>
+        @Html.EditorFor(m => m.PhoneNum)<br/>
+        <span class="text-danger" asp-validation-for="PhoneNum"></span>
+    </p>
+
+    <input type="submit" class="btn btn-primary" value="Зарегистрироваться"/>
+</form>
+
+

@@ -1,4 +1,12 @@
-﻿@model EventRegistration.Database.Models.Events.Event
+﻿@using System.Security.Claims
+@using EventRegistration.Database
+@using EventRegistration.Database.Models.Events
+@using EventRegistration.Services.DateTimeProvider
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Microsoft.EntityFrameworkCore
+@model EventRegistration.Database.Models.Events.Event
+@inject IDbContext context
+@inject IDateTimeProvider dateTimeProvider
 @{
 	ViewData["Title"] = Model.Name;
 }
@@ -13,7 +21,29 @@
     </p>
 
 	@if (User.IsInRole("Member"))
-	{
-		<a href="/home/registerOnEvent/@Model.Id" class="btn btn-primary">Записаться на мероприятие</a>
+    {
+        var userLogin = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
+        if(context.GetEntities<Registration>()
+           .Include(r => r.User)
+           .Include(r => r.Event)
+           .SingleOrDefault(r => r.User.Login == userLogin && r.Event.Id == Model.Id) is null)
+        {
+            if(Model.Date > dateTimeProvider.Now())
+            {
+                <a asp-action="SubscribeOnEvent" asp-route-id="@Model.Id" class="btn btn-primary">Записаться на мероприятие</a>
+            }
+            else
+            {
+                <p>Мероприятие уже прошло</p>
+            }
+        }
+        else
+        {
+            <p class="text-success">Вы уже записаны на это мероприятие</p>
+        }
 	}
+    else
+    {
+        <p>Чтобы записаться на мероприятие, нужно <a asp-action="Authentication">Войти</a></p>
+    }
 </div>

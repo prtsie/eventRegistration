@@ -177,4 +177,46 @@ public class HomeController(IDbContext context) : Controller
 
         return RedirectToAction(nameof(HostEvents));
     }
+
+    [HttpGet]
+    [Authorize(Program.MemberPolicy)]
+    public IActionResult SubscribeOnEvent(Guid id, CancellationToken cancellationToken)
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Program.MemberPolicy)]
+    public async Task<IActionResult> SubscribeOnEvent([FromRoute] Guid id, [FromBody] SubscribeRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        var ev = await context.GetEntities<Event>().SingleOrDefaultAsync(e => e.Id == id, cancellationToken: cancellationToken);
+        var user = await context.GetEntities<User>()
+            .SingleOrDefaultAsync(u => u.Login == User.Claims.First(c => c.Type == ClaimTypes.Name).Value, cancellationToken);
+
+        if (ev is null || user is null)
+        {
+            return NotFound();
+        }
+
+        var registration = new Registration
+        {
+            Firstname = request.Firstname,
+            Surname = request.Surname,
+            Patronymic = request.Patronymic,
+            Email = request.Email,
+            Event = ev,
+            User = user,
+            PhoneNum = request.PhoneNum
+        };
+
+        context.AddEntity(registration);
+        await context.SaveAsync(cancellationToken);
+
+        return RedirectToAction(nameof(Events));
+    }
 }
