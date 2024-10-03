@@ -5,19 +5,22 @@ namespace EventRegistration.Requests
 {
     public class CreateEventRequest
     {
-
-        [Required]
-        [MaxLength(Constraints.MaxEventNameLength)]
+        /// <summary> Название </summary>
+        [Required(ErrorMessage = "Это поле обязательно")]
+        [MaxLength(Constraints.MaxEventNameLength, ErrorMessage = "Поле слишком длинное")]
         public required string Name { get; set; }
 
-        [Required]
+        /// <summary> Дата проведения </summary>
+        [Required(ErrorMessage = "Это поле обязательно")]
         public DateTime Date { get; set; }
 
-        [Required]
-        [MaxLength(Constraints.MaxEventHostNameLength)]
+        /// <summary> Организатор </summary>
+        [Required(ErrorMessage = "Это поле обязательно")]
+        [MaxLength(Constraints.MaxEventHostNameLength, ErrorMessage = "Поле слишком длинное")]
         public required string HostName { get; set; }
 
-        [Required]
+        /// <summary> Описание </summary>
+        [Required(ErrorMessage = "Это поле обязательно")]
         public required string Description { get; set; }
     }
 }

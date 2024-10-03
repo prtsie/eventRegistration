@@ -24,13 +24,17 @@ namespace EventRegistration.Database.Models.Events
         [Required]
         public required User Host { get; set; }
 
+        /// <summary> Имя организатора </summary>
         [Required]
         [MaxLength(Constraints.MaxEventHostNameLength)]
         public required string HostName { get; set; }
 
+        /// <summary> Описание </summary>
         [Required]
+        [MaxLength(Constraints.MaxEventDescriptionLength)]
         public required string Description { get; set; }
 
+        /// <summary> Отменено ли мероприятие организатором </summary>
         public bool IsCanceled { get; set; }
     }
 }

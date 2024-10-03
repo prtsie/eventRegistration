@@ -3,7 +3,6 @@ using EventRegistration.Database;
 using EventRegistration.Database.Models.Events;
 using EventRegistration.Database.Models.Users;
 using EventRegistration.Requests;
-using EventRegistration.Services.DateTimeProvider;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -176,5 +175,49 @@ public class HomeController(IDbContext context) : Controller
         await context.SaveAsync(cancellationToken);
 
         return RedirectToAction(nameof(HostEvents));
+    }
+
+    [HttpGet]
+    [Authorize(Program.MemberPolicy)]
+    public IActionResult SubscribeOnEvent(Guid id)
+    {
+        return View();
+    }
+
+    [HttpPost]
+    [Authorize(Program.MemberPolicy)]
+    public async Task<IActionResult> SubscribeOnEvent(Guid id, SubscribeRequest request, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest();
+        }
+
+        var ev = await context.GetEntities<Event>().SingleOrDefaultAsync(e => e.Id == id, cancellationToken: cancellationToken);
+
+        var userLogin = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
+        var user = await context.GetEntities<User>()
+            .SingleOrDefaultAsync(u => u.Login == userLogin, cancellationToken);
+
+        if (ev is null || user is null)
+        {
+            return NotFound();
+        }
+
+        var registration = new Registration
+        {
+            Firstname = request.Firstname,
+            Surname = request.Surname,
+            Patronymic = request.Patronymic,
+            Email = request.Email,
+            Event = ev,
+            User = user,
+            PhoneNum = request.PhoneNum
+        };
+
+        context.AddEntity(registration);
+        await context.SaveAsync(cancellationToken);
+
+        return RedirectToAction(nameof(Events));
     }
 }
