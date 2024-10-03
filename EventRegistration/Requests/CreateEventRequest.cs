@@ -12,5 +12,12 @@ namespace EventRegistration.Requests
 
         [Required]
         public DateTime Date { get; set; }
+
+        [Required]
+        [MaxLength(Constraints.MaxEventHostNameLength)]
+        public required string HostName { get; set; }
+
+        [Required]
+        public required string Description { get; set; }
     }
 }

@@ -23,5 +23,14 @@ namespace EventRegistration.Database.Models.Events
         /// <remarks> Навигационное свойство </remarks>
         [Required]
         public required User Host { get; set; }
+
+        [Required]
+        [MaxLength(Constraints.MaxEventHostNameLength)]
+        public required string HostName { get; set; }
+
+        [Required]
+        public required string Description { get; set; }
+
+        public bool IsCanceled { get; set; }
     }
 }

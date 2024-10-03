@@ -1,17 +1,36 @@
 ﻿@model EventRegistration.Requests.CreateEventRequest
 @{
-	ViewData["Title"] = "Создать мероприятие";
+    ViewData["Title"] = "Создать мероприятие";
 }
 
-<div class="text-center">
-	<h1 class="display-4">Создать мероприятие</h1>
-	<form method="post">
-		<p>Название мероприятия:</p>
-		@Html.EditorFor(m => m.Name)
+<div>
+    <h1 class="display-4">Создать мероприятие</h1>
+    <form method="post">
 
-		<p>Дата проведения:</p>
-		@Html.EditorFor(m => m.Date)
+        <p >
+            @Html.LabelFor(m => m.Name, "Название мероприятия:")<br/>
+            @Html.EditorFor(m => m.Name)<br/>
+            <span class="text-danger" asp-validation-for="Name"></span>
+        </p>
 
-		<input class="btn btn-primary" type="submit" value="Создать мероприятие" />
-	</form>
+        <p >
+            @Html.LabelFor(m => m.Date, "Дата проведения")<br/>
+            @Html.EditorFor(m => m.Date)<br/>
+            <span class="text-danger" asp-validation-for="Date"></span>
+        </p>
+
+        <p >
+            @Html.LabelFor(m => m.HostName, "Организатор:")<br/>
+            @Html.EditorFor(m => m.HostName)<br/>
+            <span class="text-danger" asp-validation-for="HostName"></span>
+        </p>
+
+        <p >
+            @Html.LabelFor(m => m.Date, "Описание:")<br/>
+            @Html.TextAreaFor(m => m.Description)<br/>
+            <span class="text-danger" asp-validation-for="Description"></span>
+        </p>
+
+        <input class="btn btn-primary" type="submit" value="Создать мероприятие"/>
+    </form>
 </div>

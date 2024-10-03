@@ -4,33 +4,47 @@
 @{
     ViewData["Title"] = "Мероприятия";
 }
-@{
-//TODO проверка на пустость
-}
+
 <div class="text-center">
     <h1 class="display-4">Ваши мероприятия</h1>
 
-    <table class="table table-bordered table-active">
-        <thead>
-        <th>Название</th><th>Дата проведения</th><th></th>
-        </thead>
-        <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Name</td>
-                <td>@item.Date.ToShortDateString()</td>
-                @if (item.Date < dateTimeProvider.Now())
-                {
-                    <td><a href="/event/@item.Id"><input class="btn btn-danger" type="button" value="Отменить"/></a></td>
-                }
-                else
-                {
-                    <td>Мероприятие закончилось</td>
-                }
-            </tr>
-        }
-        </tbody>
-    </table>
+    @if (Model.Count > 0)
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+            <th>Название</th><th>Дата проведения</th><th>Организатор</th><th></th>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.HostName</td>
+                    <td>
+                        @if (item.IsCanceled)
+                        {
+                            <span>Мероприятие отменено</span>
+                        }
+                        else if (item.Date > dateTimeProvider.Now())
+                        {
+                            <a asp-action="CancelEvent" asp-route-id="@item.Id">
+                                <input class="btn btn-danger" type="button" value="Отменить"/>
+                            </a>
+                        }
+                        else
+                        {
+                            <span>Мероприятие закончилось</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h3>Тут пока ничего нет. <a asp-action="CreateEvent">Добавить?</a></h3>
+    }
 
 </div>
