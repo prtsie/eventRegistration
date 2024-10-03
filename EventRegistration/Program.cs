@@ -2,6 +2,7 @@ using System.Security.Claims;
 using EventRegistration.Services.DateTimeProvider;
 using EventRegistration.Database;
 using EventRegistration.Database.Models.Users;
+using EventRegistration.Services.MailService;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,10 @@ public static class Program
         builder.Services.AddScoped<IDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
         builder.Services.AddAuth();
+
+        var mailOptions = builder.Configuration.GetSection("MailOptions").Get<MailOptions>()!;
+
+        builder.Services.AddMailService(mailOptions);
     }
 
     private static void AddAuth(this IServiceCollection services)
@@ -56,6 +61,13 @@ public static class Program
 
             .AddPolicy(HostPolicy,
                 config => config.RequireClaim(ClaimTypes.Role, Role.Organizer.ToString()));
+    }
+
+    private static void AddMailService(this IServiceCollection services, MailOptions options)
+    {
+        MailService.Options = options;
+
+        services.AddScoped<IRegistrationCallbackSender, MailService>();
     }
 
     private static void ConfigureRequestPipeline(this WebApplication app)

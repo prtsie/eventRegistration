@@ -3,6 +3,7 @@ using EventRegistration.Database;
 using EventRegistration.Database.Models.Events;
 using EventRegistration.Database.Models.Users;
 using EventRegistration.Requests;
+using EventRegistration.Services.MailService;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -11,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventRegistration.Controllers;
 
-public class HomeController(IDbContext context) : Controller
+public class HomeController(IDbContext context, IRegistrationCallbackSender callbackSender) : Controller
 {
     [HttpGet]
     public IActionResult Authentication()
@@ -215,8 +216,20 @@ public class HomeController(IDbContext context) : Controller
             PhoneNum = request.PhoneNum
         };
 
-        context.AddEntity(registration);
-        await context.SaveAsync(cancellationToken);
+
+        try
+        {
+            await callbackSender.SendCallbackAsync(registration, cancellationToken);
+
+            context.AddEntity(registration);
+            await context.SaveAsync(cancellationToken);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.InnerException?.Message ?? e.Message); //TODO обработка ошибок
+            return Problem();
+        }
+
 
         return RedirectToAction(nameof(Events));
     }
