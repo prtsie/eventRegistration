@@ -2,11 +2,18 @@ using System.Security.Claims;
 using EventRegistration.Services.DateTimeProvider;
 using EventRegistration.Database;
 using EventRegistration.Database.Models.Users;
+using EventRegistration.Services.CardGenerator;
 using EventRegistration.Services.MailService;
+using EventRegistration.Services.QrGenerator;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using QuestPDF.Previewer;
 
 namespace EventRegistration;
+
 public static class Program
 {
     public const string MemberPolicy = "Member";
@@ -19,8 +26,6 @@ public static class Program
 
         var app = builder.Build();
         app.ConfigureRequestPipeline();
-
-
 
         app.Run();
     }
@@ -40,6 +45,11 @@ public static class Program
 
         builder.Services.AddAuth();
 
+        builder.Services.AddSingleton<IQrGenerator, QrGenerator>();
+
+        QuestPDF.Settings.License = LicenseType.Community;
+        builder.Services.AddSingleton<ICardGenerator, PdfCardGenerator>();
+
         var mailOptions = builder.Configuration.GetSection("MailOptions").Get<MailOptions>()!;
 
         builder.Services.AddMailService(mailOptions);
@@ -58,7 +68,6 @@ public static class Program
         services.AddAuthorizationBuilder()
             .AddPolicy(MemberPolicy,
                 config => config.RequireClaim(ClaimTypes.Role, Role.Member.ToString()))
-
             .AddPolicy(HostPolicy,
                 config => config.RequireClaim(ClaimTypes.Role, Role.Organizer.ToString()));
     }
