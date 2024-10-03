@@ -9,5 +9,6 @@
 
         // Для модели мероприятия
         public const int MaxEventNameLength = 200;
+        public const int MaxEventHostNameLength = 200;
     }
 }

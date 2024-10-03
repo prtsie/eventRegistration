@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EventRegistration.Controllers;
 
-public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvider) : Controller
+public class HomeController(IDbContext context) : Controller
 {
     [HttpGet]
     public IActionResult Authentication()
@@ -31,11 +31,7 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
             return View(request);
         }
 
-        var claims = new Claim[]
-        {
-            new(ClaimTypes.Name, user.Login),
-            new(ClaimTypes.Role, user.Role.ToString())
-        };
+        var claims = new Claim[] { new(ClaimTypes.Name, user.Login), new(ClaimTypes.Role, user.Role.ToString()) };
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
         await HttpContext.SignInAsync(identity.AuthenticationType, new(identity));
@@ -44,6 +40,7 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
         {
             return LocalRedirect(returnUrl);
         }
+
         return user.Role switch
         {
             Role.Member => RedirectToAction(nameof(Events)),
@@ -79,7 +76,7 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     [HttpGet]
     public async Task<IActionResult> Event(Guid id, CancellationToken cancellationToken)
     {
-        var eventItem = await context.GetEntities<Event>().Include(e => e.Host) //TODO убрать, когда в Event появится свойство с организатором
+        var eventItem = await context.GetEntities<Event>()
             .SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         if (eventItem == null)
@@ -93,7 +90,7 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
     [HttpGet]
     public async Task<IActionResult> Events(CancellationToken cancellationToken)
     {
-        var events = await context.GetEntities<Event>().Where(e => e.Date < dateTimeProvider.Now()).ToListAsync(cancellationToken);
+        var events = await context.GetEntities<Event>().ToListAsync(cancellationToken);
         return View(events);
     }
 
@@ -117,14 +114,9 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
             return View(request);
         }
 
-        var user = new User
-        {
-            Login = request.Login,
-            Password = request.Password,
-            Role = Role.Member
-        };
+        var user = new User { Login = request.Login, Password = request.Password, Role = Role.Member };
 
-        context.AddEntity(user);  // ����� AddEntity ��� ���������� ������������
+        context.AddEntity(user); // ����� AddEntity ��� ���������� ������������
         await context.SaveAsync(cancellationToken);
 
         return RedirectToAction(nameof(Authentication));
@@ -158,13 +150,31 @@ public class HomeController(IDbContext context, IDateTimeProvider dateTimeProvid
         {
             Name = request.Name,
             Date = request.Date,
-            Host = user
+            Host = user,
+            HostName = request.HostName,
+            Description = request.Description
         };
 
-        context.AddEntity(newEvent);  // ����� AddEntity ��� ���������� �����������
+        context.AddEntity(newEvent); // ����� AddEntity ��� ���������� �����������
         await context.SaveAsync(cancellationToken);
 
         return RedirectToAction(nameof(HostEvents));
     }
 
+    [HttpGet]
+    [Authorize(Program.HostPolicy)]
+    public async Task<IActionResult> CancelEvent(Guid id, CancellationToken cancellationToken)
+    {
+        var ev = await context.GetEntities<Event>().SingleOrDefaultAsync(e => e.Id == id);
+
+        if (ev is null)
+        {
+            return NotFound();
+        }
+
+        ev.IsCanceled = true;
+        await context.SaveAsync(cancellationToken);
+
+        return RedirectToAction(nameof(HostEvents));
+    }
 }

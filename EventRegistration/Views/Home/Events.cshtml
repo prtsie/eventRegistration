@@ -1,27 +1,49 @@
-﻿@model List<EventRegistration.Database.Models.Events.Event>
+﻿@using EventRegistration.Services.DateTimeProvider
+@model List<EventRegistration.Database.Models.Events.Event>
+@inject IDateTimeProvider dateTimeProvider
 @{
     ViewData["Title"] = "Мероприятия";
 }
-@{
-    //TODO проверка на пустость
-  }
+
 <div class="text-center">
     <h1 class="display-4">Мероприятия</h1>
 
-    <table class="table table-bordered table-active">
-        <thead>
-        <th>Название</th><th>Дата проведения</th><th></th>
-        </thead>
-        <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                @Model
-                <td>@item.Name</td>
-                <td>@item.Date.ToShortDateString()</td>
-                <td><a href="/event/@item.Id"><input class="btn btn-primary" type="button" value="Подробнее"/></a></td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
+    @if (Model.Count > 0)
+    {
+        <table class="table table-bordered table-hover">
+            <thead class="table-light">
+            <th>Название</th><th>Дата проведения</th><th>Организатор</th><th></th>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Date.ToShortDateString()</td>
+                    <td>@item.HostName</td>
+                    <td>
+                        @if (item.IsCanceled)
+                        {
+                            <span>Мероприятие отменено</span>
+                        }
+                        else if (item.Date > dateTimeProvider.Now())
+                        {
+                            <a asp-controller="Home" asp-action="Event" asp-route-id="@item.Id">
+                                <input class="btn btn-outline-primary" type="button" value="Подробнее"/>
+                            </a>
+                        }
+                        else
+                        {
+                            <span>Мероприятие окончено</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <h3>Тут пока ничего нет.</h3>
+    }
+</div >

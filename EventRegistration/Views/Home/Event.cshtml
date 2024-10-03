@@ -3,13 +3,17 @@
 	ViewData["Title"] = Model.Name;
 }
 
-<div class="text-center">
+<div>
 	<h1 class="display-4">@Model.Name</h1>
 	<p>Дата проведения: @Model.Date.ToShortDateString()</p>
-	<p>Организатор: @Model.Host.Login</p>
+    <p>Организатор: @Model.HostName</p>
+    <p>
+        Описание:<br/>
+        @Model.Description
+    </p>
 
 	@if (User.IsInRole("Member"))
 	{
-		<a href="/event/register/@Model.Id" class="btn btn-primary">Записаться на мероприятие</a>
+		<a href="/home/registerOnEvent/@Model.Id" class="btn btn-primary">Записаться на мероприятие</a>
 	}
 </div>
