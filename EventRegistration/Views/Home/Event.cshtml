@@ -44,6 +44,6 @@
 	}
     else
     {
-        <p>Чтобы записаться на мероприятие, нужно <a asp-action="Authentication">Войти</a></p>
+        <p>Чтобы записаться на мероприятие, нужно <a asp-action="Authentication" asp-route-returnUrl="@Context.Request.Path">Войти</a></p>
     }
 </div>

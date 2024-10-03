@@ -3,7 +3,6 @@ using EventRegistration.Database;
 using EventRegistration.Database.Models.Events;
 using EventRegistration.Database.Models.Users;
 using EventRegistration.Requests;
-using EventRegistration.Services.DateTimeProvider;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -180,14 +179,14 @@ public class HomeController(IDbContext context) : Controller
 
     [HttpGet]
     [Authorize(Program.MemberPolicy)]
-    public IActionResult SubscribeOnEvent(Guid id, CancellationToken cancellationToken)
+    public IActionResult SubscribeOnEvent(Guid id)
     {
         return View();
     }
 
     [HttpPost]
     [Authorize(Program.MemberPolicy)]
-    public async Task<IActionResult> SubscribeOnEvent([FromRoute] Guid id, [FromBody] SubscribeRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> SubscribeOnEvent(Guid id, SubscribeRequest request, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -195,8 +194,10 @@ public class HomeController(IDbContext context) : Controller
         }
 
         var ev = await context.GetEntities<Event>().SingleOrDefaultAsync(e => e.Id == id, cancellationToken: cancellationToken);
+
+        var userLogin = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
         var user = await context.GetEntities<User>()
-            .SingleOrDefaultAsync(u => u.Login == User.Claims.First(c => c.Type == ClaimTypes.Name).Value, cancellationToken);
+            .SingleOrDefaultAsync(u => u.Login == userLogin, cancellationToken);
 
         if (ev is null || user is null)
         {
