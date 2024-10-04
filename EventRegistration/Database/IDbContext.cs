@@ -10,6 +10,7 @@
 
         /// <summary> Получение одной сущности по id </summary>
         /// <param name="id"> Идентификатор</param>
+        /// <param name="cancellationToken">Токен отмены</param>
         /// <typeparam name="T"> Тип сущности</typeparam>
         /// <returns> Сущность, либо null, если такого идентификатора нет в базе </returns>
         Task<T?> GetByIdAsync<T>(Guid id, CancellationToken cancellationToken) where T : class;

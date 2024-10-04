@@ -1,5 +1,4 @@
-﻿using System.Text;
-using EventRegistration.Database.Models.Events;
+﻿using EventRegistration.Database.Models.Events;
 using Net.Codecrete.QrCodeGenerator;
 
 namespace EventRegistration.Services.QrGenerator

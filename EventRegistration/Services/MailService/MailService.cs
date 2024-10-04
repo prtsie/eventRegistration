@@ -16,7 +16,7 @@ namespace EventRegistration.Services.MailService
             message.From.Add(new MailboxAddress(Options.OrganizationName, Options.OrganizationMail));
             message.To.Add(new MailboxAddress($"{registration.Firstname} {registration.Surname} {registration.Patronymic}".TrimEnd(),
                 registration.Email));
-            message.Subject = "Запись на мероприятие";;
+            message.Subject = "Запись на мероприятие";
 
             var body = new TextPart(TextFormat.Plain)
             {

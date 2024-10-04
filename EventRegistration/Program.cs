@@ -7,10 +7,7 @@ using EventRegistration.Services.MailService;
 using EventRegistration.Services.QrGenerator;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using QuestPDF.Previewer;
 
 namespace EventRegistration;
 
