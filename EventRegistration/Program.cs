@@ -83,6 +83,8 @@ public static class Program
     {
         app.UseStatusCodePages();
 
+        app.UseHttpsRedirection();
+
         app.UseStaticFiles();
         app.UseRouting();
 
