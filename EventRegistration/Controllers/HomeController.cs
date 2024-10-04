@@ -205,6 +205,16 @@ public class HomeController(IDbContext context, IRegistrationCallbackSender call
             return NotFound();
         }
 
+        var foundRegistration = await context.GetEntities<Registration>()
+            .Include(r => r.User)
+            .Include(r => r.Event)
+            .SingleOrDefaultAsync(r => r.User.Id == user.Id && r.Event.Id == ev.Id);
+
+        if (foundRegistration is not null)
+        {
+            return Conflict();
+        }
+
         var registration = new Registration
         {
             Firstname = request.Firstname,
