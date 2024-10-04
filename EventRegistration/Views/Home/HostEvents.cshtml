@@ -29,7 +29,7 @@
                         else if (item.Date > dateTimeProvider.Now())
                         {
                             <a asp-action="CancelEvent" asp-route-id="@item.Id">
-                                <input class="btn btn-danger" type="button" value="Отменить"/>
+                                <input class="btn btn-outline-danger" type="button" value="Отменить"/>
                             </a>
                         }
                         else

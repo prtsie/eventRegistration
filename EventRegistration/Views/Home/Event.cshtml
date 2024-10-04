@@ -1,6 +1,7 @@
 ﻿@using System.Security.Claims
 @using EventRegistration.Database
 @using EventRegistration.Database.Models.Events
+@using EventRegistration.Database.Models.Users
 @using EventRegistration.Services.DateTimeProvider
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using Microsoft.EntityFrameworkCore
@@ -20,7 +21,7 @@
         @Model.Description
     </p>
 
-	@if (User.IsInRole("Member"))
+	@if (User.IsInRole(Role.Member.ToString()))
     {
         var userLogin = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
         if(context.GetEntities<Registration>()
@@ -43,6 +44,15 @@
             <a asp-action="Unsubscribe" asp-route-id="@Model.Id"><input type="button" class="btn btn-outline-danger" value="Отписаться"/></a>
         }
 	}
+	else if (User.IsInRole(Role.Organizer.ToString()))
+    {
+        var count = await context.GetEntities<Registration>()
+            .Include(r => r.Event)
+            .Where(r => r.Event.Id == Model.Id)
+            .CountAsync();
+
+        <p>На ваше мероприятие записалось @count человек</p>
+    }
     else
     {
         <p>Чтобы записаться на мероприятие, нужно <a asp-action="Authentication" asp-route-returnUrl="@Context.Request.Path">Войти</a></p>

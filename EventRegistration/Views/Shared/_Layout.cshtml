@@ -27,7 +27,7 @@
                             <span>
                                 Как жизнь, <b>@User.Claims.First(c => c.Type == ClaimTypes.Name).Value</b>?
                             </span>
-                            <a asp-controller="Home" asp-action="Logout" asp-route-redirectUrl="@Context.Request.Path">
+                            <a asp-controller="Home" asp-action="Logout" asp-route-returnUrl="@Context.Request.Path">
                                 <input type="button" class="btn btn-primary" value="Выход"/>
                             </a>
                         </li>
