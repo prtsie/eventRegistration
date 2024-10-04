@@ -13,7 +13,7 @@
 
 <div>
 	<h1 class="display-4">@Model.Name</h1>
-	<p>Дата проведения: @Model.Date.ToShortDateString()</p>
+	<p>Дата проведения: @Model.Date.ToString("dd.MM.yyyy hh:mm")</p>
     <p>Организатор: @Model.HostName</p>
     <p>
         Описание:<br/>
@@ -40,6 +40,7 @@
         else
         {
             <p class="text-success">Вы уже записаны на это мероприятие</p>
+            <a asp-action="Unsubscribe" asp-route-id="@Model.Id"><input type="button" class="btn btn-outline-danger" value="Отписаться"/></a>
         }
 	}
     else

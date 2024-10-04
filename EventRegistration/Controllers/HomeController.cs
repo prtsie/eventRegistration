@@ -194,7 +194,7 @@ public class HomeController(IDbContext context, IRegistrationCallbackSender call
             return BadRequest();
         }
 
-        var ev = await context.GetEntities<Event>().SingleOrDefaultAsync(e => e.Id == id, cancellationToken: cancellationToken);
+        var ev = await context.GetEntities<Event>().SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         var userLogin = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
         var user = await context.GetEntities<User>()
@@ -208,7 +208,7 @@ public class HomeController(IDbContext context, IRegistrationCallbackSender call
         var foundRegistration = await context.GetEntities<Registration>()
             .Include(r => r.User)
             .Include(r => r.Event)
-            .SingleOrDefaultAsync(r => r.User.Id == user.Id && r.Event.Id == ev.Id);
+            .SingleOrDefaultAsync(r => r.User.Id == user.Id && r.Event.Id == ev.Id, cancellationToken);
 
         if (foundRegistration is not null)
         {
@@ -242,5 +242,36 @@ public class HomeController(IDbContext context, IRegistrationCallbackSender call
 
 
         return RedirectToAction(nameof(Events));
+    }
+
+    [HttpGet]
+    [Authorize(Program.MemberPolicy)]
+    public async Task<IActionResult> Unsubscribe(Guid id, CancellationToken cancellationToken)
+    {
+        var ev = await context.GetEntities<Event>().SingleOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        var userLogin = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
+        var user = await context.GetEntities<User>()
+            .SingleOrDefaultAsync(u => u.Login == userLogin, cancellationToken);
+
+        if (ev is null || user is null)
+        {
+            return NotFound();
+        }
+
+        var foundRegistration = await context.GetEntities<Registration>()
+            .Include(r => r.User)
+            .Include(r => r.Event)
+            .SingleOrDefaultAsync(r => r.User.Id == user.Id && r.Event.Id == ev.Id, cancellationToken);
+
+        if (foundRegistration is null)
+        {
+            return BadRequest();
+        }
+
+        context.Remove(foundRegistration);
+        await context.SaveAsync(cancellationToken);
+
+        return RedirectToAction(nameof(Event), new {Id = id});
     }
 }

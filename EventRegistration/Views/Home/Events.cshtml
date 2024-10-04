@@ -1,8 +1,29 @@
-﻿@using EventRegistration.Services.DateTimeProvider
+﻿@using System.Security.Claims
+@using EventRegistration.Database
+@using EventRegistration.Database.Models.Events
+@using EventRegistration.Database.Models.Users
+@using EventRegistration.Services.DateTimeProvider
+@using Microsoft.EntityFrameworkCore
 @model List<EventRegistration.Database.Models.Events.Event>
 @inject IDateTimeProvider dateTimeProvider
+@inject IDbContext context
 @{
     ViewData["Title"] = "Мероприятия";
+
+    Registration[]? userRegistrations = null;
+
+    if (User.IsInRole(Role.Member.ToString()))
+    {
+        var login = User.Claims.First(c => c.Type == ClaimTypes.Name).Value;
+        var user = await context.GetEntities<User>().SingleOrDefaultAsync(u => u.Login == login);
+        if (user is not null)
+        {
+            userRegistrations = await context.GetEntities<Registration>()
+                .Include(r => r.User)
+                .Include(r => r.Event)
+                .Where(r => r.User.Id == user.Id).ToArrayAsync();
+        }
+    }
 }
 
 <div class="text-center">
@@ -17,7 +38,17 @@
             <tbody>
             @foreach (var item in Model)
             {
-                <tr>
+                var rowClass = string.Empty;
+                if (item.Date < dateTimeProvider.Now() || item.IsCanceled)
+                {
+                    rowClass = "table-danger";
+                }
+                else if (userRegistrations?.FirstOrDefault(r => r.Event.Id == item.Id) is not null)
+                {
+                    rowClass = "table-success";
+                }
+
+                <tr class="@rowClass">
                     <td>@item.Name</td>
                     <td>@item.Date.ToShortDateString()</td>
                     <td>@item.HostName</td>
@@ -26,7 +57,7 @@
                         {
                             <span>Мероприятие отменено</span>
                         }
-                        else if (item.Date > dateTimeProvider.Now())
+                        else if (rowClass != "table-danger") // Истинно, когда мероприятие ещё не прошло
                         {
                             <a asp-controller="Home" asp-action="Event" asp-route-id="@item.Id">
                                 <input class="btn btn-outline-primary" type="button" value="Подробнее"/>
